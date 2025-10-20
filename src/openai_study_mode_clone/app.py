@@ -10,6 +10,8 @@ async def main():
 @cl.on_message
 async def handle_message(message: str):
     user_id = cl.user_session.get("user_id")
-    response = await study_agent_service(message.content, user_id)
+    msg = cl.Message(content="thinking...")
+    await msg.send()
+    msg.content = await study_agent_service(message.content, user_id)
     
-    await cl.Message(content=response).send()
+    await msg.update()
