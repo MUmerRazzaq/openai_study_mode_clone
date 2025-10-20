@@ -8,6 +8,8 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "bcrypt>=5.0.0",
+    "chainlit>=2.8.3",
     "openai-agents>=0.3.3",
 ]
 

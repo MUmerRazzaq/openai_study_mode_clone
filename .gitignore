@@ -11,3 +11,19 @@ wheels/
 
 # Environment variables
 .env
+*.db
+# IDE files
+.vscode/.idea/
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+# Logs and temporary files
+logs/*.log
+tmp/
+*.tmp
+# Chainlit files
+
+.chainlit/
+
+*.db-shm
+*.db-wal
+*.db-journal
