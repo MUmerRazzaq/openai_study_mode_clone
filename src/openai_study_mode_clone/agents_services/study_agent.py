@@ -73,7 +73,7 @@ Be encouraging, concise, and adapt to the student’s level and goals.
 
 
 async def study_agent_service(user_input: str , user_id: str) -> str:
-    session = SQLiteSession(user_id, "study_agent_session.db")
+    session = SQLiteSession(user_id)
     response = Runner.run_streamed(
         starting_agent=study_agent,
         input=user_input,
