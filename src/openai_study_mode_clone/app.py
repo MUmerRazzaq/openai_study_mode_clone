@@ -10,8 +10,11 @@ async def main():
 @cl.on_message
 async def handle_message(message: str):
     user_id = cl.user_session.get("user_id")
-    msg = cl.Message(content="thinking...")
+    msg = cl.Message(content="making progress...\n")
     await msg.send()
-    msg.content = await study_agent_service(message.content, user_id)
+
+    async for chunk in study_agent_service(message.content, user_id):
+        
+        await msg.stream_token(chunk)
     
-    await msg.update()
+    await msg.send()

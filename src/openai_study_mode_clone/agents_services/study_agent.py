@@ -1,6 +1,7 @@
-from agents import Agent, Runner , SQLiteSession
-import asyncio
+from agents import Agent, Runner , SQLiteSession , ItemHelpers
 from openai_study_mode_clone.config.llm_model_config import model
+from openai.types.responses import ResponseTextDeltaEvent
+
 
 study_agent : Agent = Agent(
     name="Study Agent",
@@ -73,10 +74,33 @@ Be encouraging, concise, and adapt to the student’s level and goals.
 
 async def study_agent_service(user_input: str , user_id: str) -> str:
     session = SQLiteSession(user_id, "study_agent_session.db")
-    response = await Runner.run(
+    response = Runner.run_streamed(
         starting_agent=study_agent,
         input=user_input,
         session=session
     )
-    session.close()
-    return response.final_output
+    async for event in response.stream_events():
+      if event.type == "raw_response_event" and isinstance( event.data,ResponseTextDeltaEvent ):
+         yield(f"{event.data.delta}")
+      
+
+   #  async for event in response.stream_events():
+   #      # We'll ignore the raw responses event deltas
+   #      if event.type == "raw_response_event":
+   #          continue
+   #      # When the agent updates, print that
+   #      elif event.type == "agent_updated_stream_event":
+   #          yield(f"Agent updated: {event.new_agent.name}")
+   #      # When items are generated, print them
+   #      elif event.type == "run_item_stream_event":
+   #          if event.item.type == "tool_call_item":
+   #              yield("-- Tool was called")
+   #          elif event.item.type == "tool_call_output_item":
+   #              yield(f"-- Tool output: {event.item.output}")
+   #          elif event.item.type == "message_output_item":
+   #              yield(f"-- Message output:\n {ItemHelpers.text_message_output(event.item)}")
+   #          else:
+   #              break  # Ignore other event types
+
+   #          # yield("=== Run complete ===")
+   #            # Exit after handling the run item event
