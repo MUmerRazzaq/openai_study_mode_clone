@@ -1,14 +1,20 @@
-# Welcome to Chainlit! 🚀🤖
+# Welcome to Study Mode! �✨
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+Hi! This is your personal Study Assistant, powered by AI and Chainlit.
 
-## Useful Links 🔗
+## What can you do here?
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+- **Get help with homework:** Ask for step-by-step guidance and concept explanations.
+- **Review for exams:** Request a study plan, topic breakdown, and practice questions.
+- **Understand difficult concepts:** Get clear explanations, examples, and mini-quizzes.
+- **Build a study routine:** Create a daily or weekly plan tailored to your goals.
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
+## How to use
 
-## Welcome screen
+- Start a chat and describe what you need help with.
+- Choose a starter (e.g., “Help Me Study for My Exam” or “Explain My Homework”) for a guided experience.
+- The assistant will ask questions, provide plans, and guide you through learning—never just giving answers, but helping you understand.
 
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.
+## About
+
+This app is built with [Chainlit](https://docs.chainlit.io) and OpenAI, designed to make studying interactive, supportive, and effective.
