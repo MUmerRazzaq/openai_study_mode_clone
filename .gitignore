@@ -23,7 +23,7 @@ tmp/
 # Chainlit files
 
 .chainlit/
-
+.mypy_cache/
 *.db-shm
 *.db-wal
 *.db-journal

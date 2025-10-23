@@ -1,3 +1,20 @@
+---
+title: Study Mode
+emoji: 📚
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+short_description: AI-Powered Study Assistant built with Chainlit and OpenAI
+tags:
+  - education
+  - chatbot
+  - ai-assistant
+  - study
+  - learning
+---
+
 # Study Mode – AI-Powered Study Assistant
 
 **Study Mode** is an interactive AI assistant built with Chainlit and OpenAI, designed to help students learn, review, and practice more effectively.
@@ -18,7 +35,7 @@
    chainlit run src/openai_study_mode_clone/app.py
    ```
 2. **Open in browser:**  
-   Visit [http://localhost:8000](http://localhost:8000) to chat with your Study Assistant.
+   Visit [http://localhost:7860](http://localhost:7860) to chat with your Study Assistant.
 3. **Choose a starter or ask a question:**  
    Select a starter (e.g., “Help Me Study for My Exam”) or type your own question to begin.
 
@@ -34,22 +51,35 @@
 
 - Python 3.10+
 - [Chainlit](https://docs.chainlit.io)
-- OpenAI API key (if using OpenAI models)
+- Gemini API key (for LLM)
 
 ## Setup
 
+### Local Development
+
 1. Install dependencies:
    ```
-   pip install chainlit openai
+   pip install chainlit openai-agents
    ```
-2. Set your OpenAI API key as an environment variable:
+2. Set your API keys in `.env`:
    ```
-   set OPENAI_API_KEY=your-key-here
+   GEMINI_API_KEY=your-gemini-api-key
+   LLM_CHAT_COMPLETION_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+   LLM_MODEL=gemini-2.0-flash
    ```
 3. Run the app:
    ```
    chainlit run src/openai_study_mode_clone/app.py
    ```
+
+### Hugging Face Spaces Deployment
+
+See [HUGGINGFACE_SETUP.md](./HUGGINGFACE_SETUP.md) for detailed deployment instructions and troubleshooting.
+
+**Required Environment Variables:**
+
+- `GEMINI_API_KEY` - Your Gemini API key
+- `LLM_CHAT_COMPLETION_URL` - Usually `https://generativelanguage.googleapis.com/v1beta/openai/`
 
 ## License
 

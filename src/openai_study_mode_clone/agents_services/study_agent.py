@@ -1,7 +1,17 @@
 from agents import Agent, Runner , SQLiteSession , ItemHelpers
 from openai_study_mode_clone.config.llm_model_config import model
 from openai.types.responses import ResponseTextDeltaEvent
+import logging
+import traceback
+import os
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Set up database directory
+DB_DIR = os.environ.get("SQLITE_DB_DIR", "/app/data")
+os.makedirs(DB_DIR, exist_ok=True)
+logger.info(f"SQLite database directory: {DB_DIR}")
 
 study_agent : Agent = Agent(
     name="Study Agent",
@@ -72,35 +82,68 @@ Be encouraging, concise, and adapt to the student’s level and goals.
 )
 
 
-async def study_agent_service(user_input: str , user_id: str) -> str:
-    session = SQLiteSession(user_id)
-    response = Runner.run_streamed(
-        starting_agent=study_agent,
-        input=user_input,
-        session=session
-    )
-    async for event in response.stream_events():
-      if event.type == "raw_response_event" and isinstance( event.data,ResponseTextDeltaEvent ):
-         yield(f"{event.data.delta}")
-      
+async def study_agent_service(user_input: str, user_id: str):
+    session = None
+    try:
+        logger.info(f"Starting study_agent_service for user {user_id}")
+        logger.debug(f"User input: {user_input[:200]}...")
+        
+        # Use custom database path
+      #   db_path = os.path.join(DB_DIR, f"{user_id}.db")
+        session = SQLiteSession(user_id, db_path="study_agent.db")
+      #   logger.info(f"SQLiteSession created for user {user_id} at {db_path}")
+        
+        response = Runner.run_streamed(
+            starting_agent=study_agent,
+            input=user_input,
+            session=session
+        )
+        logger.info(f"Runner started for user {user_id}")
+        
+        event_count = 0
+        async for event in response.stream_events():
+            event_count += 1
+            if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+                yield(f"{event.data.delta}")
+            else:
+                logger.debug(f"Event {event_count}: {event.type}")
+        
+        logger.info(f"Study agent service completed for user {user_id}. Processed {event_count} events.")
+    except Exception as e:
+        error_msg = f"Error in study_agent_service for user {user_id}: {str(e)}"
+        logger.error(error_msg)
+        logger.error(traceback.format_exc())
+        yield "\n\n⚠️ An error occurred while generating the response. Please try again."
+    finally:
+        if session is not None:
+            try:
+                session.close()
+            except Exception:
+                logger.exception(f"Failed to close SQLiteSession for user {user_id}")
+            else:
+                logger.info(f"SQLiteSession closed for user {user_id}")
 
-   #  async for event in response.stream_events():
-   #      # We'll ignore the raw responses event deltas
-   #      if event.type == "raw_response_event":
-   #          continue
-   #      # When the agent updates, print that
-   #      elif event.type == "agent_updated_stream_event":
-   #          yield(f"Agent updated: {event.new_agent.name}")
-   #      # When items are generated, print them
-   #      elif event.type == "run_item_stream_event":
-   #          if event.item.type == "tool_call_item":
-   #              yield("-- Tool was called")
-   #          elif event.item.type == "tool_call_output_item":
-   #              yield(f"-- Tool output: {event.item.output}")
-   #          elif event.item.type == "message_output_item":
-   #              yield(f"-- Message output:\n {ItemHelpers.text_message_output(event.item)}")
-   #          else:
-   #              break  # Ignore other event types
 
-   #          # yield("=== Run complete ===")
-   #            # Exit after handling the run item event
+
+
+
+# async for event in response.stream_events():
+#     # We'll ignore the raw responses event deltas
+#     if event.type == "raw_response_event":
+#         continue
+#     # When the agent updates, print that
+#     elif event.type == "agent_updated_stream_event":
+#         yield(f"Agent updated: {event.new_agent.name}")
+#     # When items are generated, print them
+#     elif event.type == "run_item_stream_event":
+#         if event.item.type == "tool_call_item":
+#             yield("-- Tool was called")
+#         elif event.item.type == "tool_call_output_item":
+#             yield(f"-- Tool output: {event.item.output}")
+#         elif event.item.type == "message_output_item":
+#             yield(f"-- Message output:\n {ItemHelpers.text_message_output(event.item)}")
+#         else:
+#             break  # Ignore other event types
+#
+#         # yield("=== Run complete ===")
+#         # Exit after handling the run item event
